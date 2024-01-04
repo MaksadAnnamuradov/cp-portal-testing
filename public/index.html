@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- <html v-if="Sublib ? !Sublib.usingWebview('ios') ? '" lang="en" manifest="/cplite.appcache"> -->
+<html lang="en" manifest="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- See https://ayogo.com/blog/ios11-viewport/ for info on the iOS setting in webviews of viewport-fit -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no,maximum-scale=1.0, user-scalable=no, viewport-fit=contain">
+    <meta name="HandheldFriendly" content="true" />
+    
+    <!-- NOTE: See C:\Source\CenPoint\cplite\node_modules\@vue\cli-plugin-pwa\lib\HtmlPwaPlugin.js for where our 'icon' is defined (gets auto injected in the build) -->
+    
+    <!-- NOTE: This gets auto injected in the build but need it here for testing -->
+    <!-- Had to uncomment this while debugging -->
+    <!-- <link rel="manifest" href="/manifest.json">  -->
+    <link rel="dx-theme" data-theme="material.blue.dark.compact" href="/dx.material.blue.dark.compact.css" data-active="true">
+    <link rel="dx-theme" data-theme="material.blue.light.compact" href="/dx.material.blue.light.compact.css" data-active="false">
+
+
+
+    <title>CP Portal</title>
+  </head>
+  <body class="dx-viewport">
+    <noscript>
+      <strong>We're sorry, but CenPoint Portal doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+
+    <script>
+        // NOTE: This used to be in App.vue but we sometimes hit this error before App.vue ever loaded. Putting it here to try to account for it.      
+        window.onerror = async function(mMsg, mSource, mLineNo, mColNo, error){
+            // mMsg = Char. Error Msg: i.e. "Uncaugh SyntaxError: Unexpected token '<'"
+            // mSource = Char. i.e. 'https://portal.cenpoint.com/js/chunk-431587f6.ff603bf5.js'
+            // mLineNo = Numeric. Line no
+            // mColNo = Numeric. Col no
+            // error = Object. Error object        
+            
+            if (location.href.indexOf('about:blank') > -1) {
+                // I've seen on the iPhones sometimes where it loads a blank page. Very strange. 
+                 // If we reload too many times, it's almost like safari 'black lists' us and won't load our page until
+                // the user clears the cache (see https://support.apple.com/en-us/HT203370 and https://support.apple.com/en-us/HT204229)
+                // Not sure I'll ever actually hit this but putting it in anyways (note's dont hurt)                
+
+                console.log(error);
+                window.location = 'https://portal.cenpoint.com';
+
+
+            } else if ((mMsg.toLowerCase().indexOf("unexpected token '<'") >-1 || mMsg.toLowerCase().indexOf("unexpected token <") >-1
+                    || mMsg.toLowerCase().indexOf("expected expression, got '<'") > -1 || mMsg.toLowerCase().indexOf("expected expression, got <") > -1) 
+                && mMsg.toLowerCase().indexOf('.map') < 0){
+                // Chrome throws the 'unexpected token', firefox throws the 'expected expression, go '<'. SRR 02/13/2020
+                // this happens when a new update gets applies but my router.vue file hasn't been pulled down for whatever reason. A page refresh fixes it. SRR 01/29/2020
+                // mSource = 
+
+
+                console.log(error);
+
+
+                if (navigator.onLine){
+                    // Delete the 'cache storage' and then reload
+                    var aCaches = await caches.keys();
+                    await Promise.all(aCaches.map(function(key) {
+                        return caches.delete(key);
+                    }));
+
+                    var mAlreadyRefreshed = localStorage.getItem('errorAlreadyRefreshed');
+
+                    if (!mAlreadyRefreshed || mAlreadyRefreshed != 'true'){
+                        // If we reload too many times, it's almost like safari 'black lists' us and won't load our page until
+                        // the user clears the cache (see https://support.apple.com/en-us/HT203370 and https://support.apple.com/en-us/HT204229)
+                        localStorage.setItem('errorAlreadyRefreshed', true); // reset once app loads correctly (see App.vue)
+                        window.location.reload(true);
+                    }
+                }
+                
+                return true; // needed so firefox doesn't handle the error as well and really does my code
+            } else {
+                console.log(error);
+            }
+
+        }; // window.onerror
+    </script>
+    <!-- built files will be auto injected -->
+    <!-- <script src="../src/DataTypeAddOns.js"></script> -->
+    <script src="offline_chkr.js"></script> <!--added -Nov 11, 2020 -->
+    <script src="jquery-2.2.4.min.js"></script> <!--added -Nov 11, 2020 -->
+    <script src="jetpack-handwriting-pad.js"></script> <!--added -Nov 11, 2020 -->
+    <script src="load-image.all.min.js"></script> <!--added -Nov 11, 2020 -->
+    <script src="intersection-observer.js"></script> <!--added -Nov 11, 2020 -->
+    <script src="long-press-event.js"></script> <!--added -Nov 11, 2020 -->
+    <script src="QRCode.js"></script> <!--added -Nov 11, 2020 -->
+    <script src="alasql.min.js"></script> <!--added -Aug 30, 2023 -->
+    <script src="chart.js"></script> <!--added -Nov 29, 2023 -->
+    <!-- <script src="printJS.min.js"></script> -->
+
+    <!-- NOTE: From Stripe: This script must always load directly from https://js.stripe.com for compatibility with the latest reader software. 
+        Do not include the script in a bundle or host a copy yourself; this could break your integration without warning. -->
+    <!-- <script src="https://js.stripe.com/terminal/v1/"></script>  switched to NPM install-->
+
+    <!-- 3cx Live Chat, HTML on specific pages -->
+    <!-- <script src="https://dssapps.3cx.us:5001/callus.js" charset="utf-8"></script> -->
+  </body>
+</html>

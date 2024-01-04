@@ -1,0 +1,40 @@
+{
+  "name": "CP Portal",
+  "short_name": "CP Portal",
+  "icons": [
+    {
+      "src": "./img/icons/prod/launcher192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./img/icons/prod/launcher512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2D4E60",
+  "theme_color": "#2D4E60",
+
+  "description": "Manage your business with ease with electronic invoicing, quoting, scheduling/dispatching, and more.",
+
+  "screenshots": [
+    {
+      "src": "img/PWAInstall/homeScreen.png",
+      "sizes": "648x592",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Home Screen"
+    },
+    {
+      "src": "img/PWAInstall/homeScreenTech.png",
+      "sizes": "1312x2560",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Home Screen"
+    }
+  ]
+  
+}
