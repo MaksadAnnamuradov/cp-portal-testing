@@ -2,8 +2,8 @@
   // These tasks will run in order when initializing your CodeSandbox project.
   "setupTasks": [
     {
-      "name": "Install Dependencies",
-      "command": "npm install"
+      "command": "npm install --legacy-peer-deps",
+      "name": "npm install --legacy-peer-deps"
     }
   ],
 
@@ -11,18 +11,16 @@
   "tasks": {
     "serve": {
       "name": "serve",
-      "command": "npm run serve",
+      "command": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
       "runAtStart": true
     },
     "build": {
       "name": "build",
-      "command": "npm run build",
-      "runAtStart": false
+      "command": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build"
     },
     "lint": {
       "name": "lint",
-      "command": "npm run lint",
-      "runAtStart": false
+      "command": "npm run lint"
     }
   }
 }
